@@ -104,6 +104,18 @@ int main(void) {
                 fx += lj_scalar * dx;
                 fy += lj_scalar * dy;
 
+                // --- Nuclear Force ---
+                if (a.isNucleon() && b.isNucleon()) {
+                    double ns_f = (
+                        NF_STRENGTH * std::exp(-r / NF_RANGE) /
+                        (r * r) * (1 + r / NF_RANGE)
+                    );
+
+                    if (ns_f > NF_MAX_FORCE) ns_f = NF_MAX_FORCE;
+                    fx += -ns_f * dx / r;
+                    fy += -ns_f * dy / r;
+                }
+
                 // -- Apply Forces ---
                 a.ax += fx / a.mass;
                 a.ay += fy / a.mass;
